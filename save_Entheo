@@ -1,0 +1,32 @@
+#STATS
+Level:1
+Health:150
+Mana:80
+Strength:10
+Intelligence:10
+
+#SKILLS
+Cut
+
+#MAGIC
+Fire
+Blizzard
+Thunder
+Fira
+
+#ITEMS
+Potion, 5
+Hi-Potion, 2
+Ether, 4
+Phoenix Down, 5
+Elixer, 1
+Grenade, 4
+Speed Potion, 8
+
+#EQUIP
+Weapon:Dagger
+Armor:Empty
+Helm:Empty
+Ring 1:Empty
+Ring 2:Empty
+Amulet:Empty
