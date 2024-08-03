@@ -8,15 +8,19 @@ import character
 import grid
 import menu
 
+# Clear the screen
 def cls():
     os.system("cls")
     
+# Print single line without newline character
 def printl(arg):
     print(arg, end = "")
 
+# Write to grid
 def printg(arg):
     grid.Write(arg)
 
+# Get escape sequences from codes module, load specified ascii data
 def LoadAscii(id):
     tags = ["<fBlk>", "<fR>", "<fG>", "<fY>", "<fB>", "<fP>", "<fW>",
         "<fLBlk>", "<fLR>", "<fLG>", "<fLY>", "<fLB>", "<fLP>", "<fLW>",
@@ -31,11 +35,8 @@ def LoadAscii(id):
         codes.reset]
 
     file = open(__file__ + "\\..\\ascii_" + id)
-
     content = file.readlines()
-
     file.close()
-
     lineCount = 0
 
     for line in content:
@@ -47,27 +48,30 @@ def LoadAscii(id):
 
     return content
     
+# Print status bar - health, mana, or action points
 def PrintBar(label, current, max, style):
     if style == 0:
         barLength = 28
 
     elif style == 1 or style == 2:
         barLength = 18
-
         label = str(current) + "/" + str(max)
 
     barSplitIndex = int(math.ceil(barLength * (current / max)))
-
     labelPosition = int(math.ceil(barLength / (len(label) / 2)))
-
     labelIndex = 0
 
+    """ style 0 - health (green)
+        style 1 - mana (blue)
+        style 2 - AP (gray) """
+        
     if style == 0:
         printl(codes.fgLightWhite + codes.bgLightGreen)
         
     elif style == 1:
         printg(codes.fgLightWhite + codes.bgBlue)
 
+    # Fill bar and print label
     for i in range(0, barLength):
         if i == barSplitIndex:
             if style == 0:
@@ -106,6 +110,7 @@ def PrintBar(label, current, max, style):
     else:
         printg(codes.reset)
 
+# Print character stats - level, experience, health, and status effect(s)
 def PrintStats():
     margin = "     "
 
@@ -129,33 +134,24 @@ def PrintStats():
 
     printg(margin + codes.fgLightWhite + "Status: " + codes.fgLightPurple + "cursed" + codes.fgWhite + "           \n")
 
-    #printg(margin + codes.fgPurple + "cursed" + codes.fgWhite + ", " + codes.fgLightBlue + "frozen           \n")
-
     printg(blankLine)
     printg(blankLine)
 
-    # TODO: print status effects
-    
+# Redraw all screen contents
 def Draw(state):
     cls()
-
     grid.cells = [[], [], []]
-
     margin = "     "
-
     blankLine = "                              \n"
     
     match state:
         case "BATTLE":
+        
             # Print health bars
             printl("\n\n\t\t\t\t   ")
-
             PrintBar(player.name, 127, player.maxHealth, 0)
-
             printl("\t\t\t  ")
-
             PrintBar("Death", 20, 60, 0)
-            
             printl("\n")
 
             # -------------------------------------
@@ -171,20 +167,14 @@ def Draw(state):
 
             # Print action bar
             printg(codes.fgLightWhite)
-
             printg(margin)
-
             PrintBar("", 8, 60, 2)
-
             printg(codes.reset)
-
             printg("       \n")
             
             # Print mana bar
             printg(margin)
-
             PrintBar("", 20, 105, 1)
-
             printg("       \n")
             
             # Print selection menu
@@ -208,7 +198,6 @@ def Draw(state):
 
         case "PAUSE0" | "PAUSE1" | "PAUSE2":
             margin = "\t\t\t\t\t\t    "
-            
             style = [codes.fgLightGreen, codes.fgLightGreen, codes.fgLightGreen, codes.fgLightGreen]
 
             match state[5]:
@@ -222,9 +211,7 @@ def Draw(state):
                     style[2] = codes.fgLightWhite
             
             print(codes.fgLightGreen)
-
             print("\n\n\n\n\n\n\n")
-
             print(margin + f" ______________")
             print(margin + f"|              |")
             print(margin + f"|    {style[0]}Resume{style[3]}    |")
@@ -240,33 +227,33 @@ def Draw(state):
 # -------------------------
 
 playerName = "Entheo"
-        
 player = character.Character(playerName)
-
 grid = grid.Grid()
-
 menu = menu.Menu(grid, playerName)
-
 ascii = ["", ""]
-
 ascii[0] = LoadAscii("player")
-
 ascii[1] = LoadAscii("enemy")
-
 state = "BATTLE"
-
 prevState = state
-
 userInput = "\0"
 
 Draw(state)
 
-# Game loop
+# -------------------------
+#      Game loop
+# -------------------------
 while True:
     userInput = "\0"
 
+    # Finite-state machine
     match state:
+    
+        # Battle state
         case "BATTLE":
+        
+            """ Handle menu selection input, redraw screen
+                after user presses return, space, or escape """
+                
             while userInput != b'\r' and userInput != b' ':
                 userInput = msvcrt.getch()
                     
@@ -322,12 +309,16 @@ while True:
 
             Draw(state)
 
+        # Pause menu state
         case "PAUSE":
+        
+            """ Handle menu selection input, redraw screen
+                after user presses return, space, or escape """
+                
             selected = 0
 
-            while userInput != b'\r':
+            while userInput != b'\r' and userInput != b' ':
                 Draw(state + str(selected))
-                
                 userInput = msvcrt.getch()
 
                 if userInput == codes.DOWN and selected < 2:
@@ -338,9 +329,7 @@ while True:
 
                 elif userInput == codes.ESC:
                     state = prevState
-
                     Draw(state)
-
                     break
                         
                 else:
@@ -352,7 +341,6 @@ while True:
             match selected:
                 case 0:
                     state = prevState
-
                     Draw(state)
 
                 case 1:
@@ -361,5 +349,4 @@ while True:
 
                 case 2:
                     cls()
-
                     quit()

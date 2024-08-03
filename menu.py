@@ -1,27 +1,23 @@
 from os.path import exists
 import ctypes
-
 import codes
 
 def printl(arg):
     print(arg, end = "")
 
 class Menu:
+    # Initialize menu object
     def __init__(self, grid, character):
         self.grid = grid
-
         self.save = __file__ + "\\..\\save_" + character
-
         self.id = "MAIN"
-
         self.selected = 0
-
         self.shownIndex = 0
-
         self.data = [[], [], {}]
 
         self.Update()
 
+    # Update menu based on user input
     def Update(self):
         if exists(self.save):
                 for idIndex in range(0, 3):
@@ -36,9 +32,7 @@ class Menu:
                             id = "ITEMS"
 
                     file = open(self.save, "r")
-
                     content = file.readlines()
-
                     lineCount = 0
 
                     for line in content:
@@ -65,7 +59,8 @@ class Menu:
 
         else:
             ctypes.windll.user32.MessageBoxW(0, "File doesn't exist", "Debug", 1)
-        
+    
+    # Print menu
     def Print(self):
         arrow = [chr(24), chr(25)]
 

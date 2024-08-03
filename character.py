@@ -1,11 +1,11 @@
 from os.path import exists
 
 class Character:
+    # Initialize character object
     def __init__(self, name):
         self.name = name
-
         self.magic = [[], [], [], []]
-
+        
         self.LoadMagic()
 
         self.maxHealth = 150
@@ -14,22 +14,17 @@ class Character:
         # self.currentMana = self.maxMana
         # attack from file
        
+    # Load character's magic from save file
     def LoadMagic(self):
         self.magic = [[], [], [], []]
-
         saveFileName = __file__ + "\\..\\save_" + self.name
-
         labels = []
-
         details = []
-
         found = False
 
         if exists(saveFileName):
             file = open(saveFileName, "r")
-
             content = file.readlines()
-
             lineCount = 0
 
             for line in content:
@@ -76,5 +71,4 @@ class Character:
 
         else:
             print("Failed to open magic data file.\n" + str(found))
-
             quit()
